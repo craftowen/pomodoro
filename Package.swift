@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Pomodoro",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14)
     ],
@@ -17,7 +18,10 @@ let package = Package(
                 "KeyboardShortcuts"
             ],
             path: "Pomodoro",
-            exclude: ["Info.plist"]
+            exclude: ["Info.plist"],
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )

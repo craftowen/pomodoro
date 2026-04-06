@@ -7,7 +7,7 @@ struct TaskListView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("오늘 할 일")
+            Text(String(localized: "today.tasks"))
                 .font(.system(size: 9, weight: .semibold, design: .rounded))
                 .foregroundStyle(.quaternary)
                 .textCase(.uppercase)
@@ -17,7 +17,7 @@ struct TaskListView: View {
                 .padding(.bottom, 6)
 
             if taskVM.todayTasks.isEmpty && !isAddingTask {
-                Text("오늘 예정된 일정이 없습니다")
+                Text(String(localized: "no.tasks"))
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity)
@@ -41,7 +41,7 @@ struct TaskListView: View {
 
             if isAddingTask {
                 HStack(spacing: 8) {
-                    TextField("할 일 입력", text: $newTaskTitle)
+                    TextField(String(localized: "task.placeholder"), text: $newTaskTitle)
                         .textFieldStyle(.plain)
                         .font(.system(size: 11, design: .rounded))
                         .onSubmit {
@@ -50,7 +50,7 @@ struct TaskListView: View {
                             isAddingTask = false
                         }
 
-                    Button("취소") {
+                    Button(String(localized: "cancel")) {
                         newTaskTitle = ""
                         isAddingTask = false
                     }
@@ -65,7 +65,7 @@ struct TaskListView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: 9))
-                        Text("추가")
+                        Text(String(localized: "add"))
                             .font(.system(size: 10, design: .rounded))
                     }
                     .foregroundStyle(.tertiary)

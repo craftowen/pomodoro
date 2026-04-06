@@ -13,7 +13,7 @@ struct InlineSettingsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // Header
                 HStack(spacing: 6) {
-                    Text("설정")
+                    Text(String(localized: "settings.title"))
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(.primary)
                 }
@@ -23,33 +23,33 @@ struct InlineSettingsView: View {
                 Divider()
 
                 // Timer section
-                settingsSectionHeader("타이머")
+                settingsSectionHeader(String(localized: "settings.timer"))
 
-                settingsRow("포모도로") {
-                    Stepper("\(settings.focusDurationMinutes)분",
+                settingsRow(String(localized: "settings.pomodoro")) {
+                    Stepper(String(format: String(localized: "settings.duration"), settings.focusDurationMinutes),
                             value: Bindable(settings).focusDurationMinutes,
                             in: 1...120)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(.secondary)
                 }
 
-                settingsRow("짧은 휴식") {
-                    Stepper("\(settings.shortBreakDurationMinutes)분",
+                settingsRow(String(localized: "settings.shortBreak")) {
+                    Stepper(String(format: String(localized: "settings.duration"), settings.shortBreakDurationMinutes),
                             value: Bindable(settings).shortBreakDurationMinutes,
                             in: 1...60)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(.secondary)
                 }
 
-                settingsRow("긴 휴식") {
-                    Stepper("\(settings.longBreakDurationMinutes)분",
+                settingsRow(String(localized: "settings.longBreak")) {
+                    Stepper(String(format: String(localized: "settings.duration"), settings.longBreakDurationMinutes),
                             value: Bindable(settings).longBreakDurationMinutes,
                             in: 1...60)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(.secondary)
                 }
 
-                settingsRow("자동 시작") {
+                settingsRow(String(localized: "settings.autoStart")) {
                     Toggle("", isOn: Bindable(settings).autoStartNextPomodoro)
                         .toggleStyle(.switch)
                         .controlSize(.mini)
@@ -60,10 +60,10 @@ struct InlineSettingsView: View {
                     .padding(.vertical, 4)
 
                 // Shortcut section
-                settingsSectionHeader("단축키")
+                settingsSectionHeader(String(localized: "settings.shortcuts"))
 
                 HStack {
-                    Text("시작/정지")
+                    Text(String(localized: "settings.startStop"))
                         .font(.system(size: 12, design: .rounded))
                         .foregroundStyle(.primary)
                     Spacer()
@@ -78,7 +78,7 @@ struct InlineSettingsView: View {
                     .padding(.vertical, 4)
 
                 // Calendar section
-                settingsSectionHeader("캘린더")
+                settingsSectionHeader(String(localized: "settings.calendar"))
 
                 if calendarVM.isAuthorized {
                     ForEach(calendarVM.calendars) { cal in
@@ -95,7 +95,7 @@ struct InlineSettingsView: View {
                         }
                     }
 
-                    Button("일정 새로고침") {
+                    Button(String(localized: "settings.refreshEvents")) {
                         calendarVM.syncEvents(into: taskVM)
                     }
                     .buttonStyle(.plain)
@@ -104,13 +104,13 @@ struct InlineSettingsView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
                 } else {
-                    Text("macOS 캘린더에 등록된 모든 계정의 일정을 불러옵니다.")
+                    Text(String(localized: "settings.calendarDescription"))
                         .font(.system(size: 10, design: .rounded))
                         .foregroundStyle(.tertiary)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 2)
 
-                    Button("캘린더 접근 허용") {
+                    Button(String(localized: "settings.allowCalendar")) {
                         Task { await calendarVM.requestAccess() }
                     }
                     .buttonStyle(.plain)
@@ -133,9 +133,9 @@ struct InlineSettingsView: View {
                     .padding(.vertical, 4)
 
                 // General section
-                settingsSectionHeader("일반")
+                settingsSectionHeader(String(localized: "settings.general"))
 
-                settingsRow("로그인 시 자동 시작") {
+                settingsRow(String(localized: "settings.launchAtLogin")) {
                     Toggle("", isOn: Binding(
                         get: { settings.launchAtLogin },
                         set: { newValue in
@@ -155,7 +155,7 @@ struct InlineSettingsView: View {
                     .controlSize(.mini)
                 }
 
-                settingsRow("알림 사운드") {
+                settingsRow(String(localized: "settings.sound")) {
                     Toggle("", isOn: Bindable(settings).soundEnabled)
                         .toggleStyle(.switch)
                         .controlSize(.mini)

@@ -188,6 +188,36 @@ final class TimerViewModel {
 
         if state.isPaused { return }
 
+        let overrun = elapsedWhileSleeping - state.remainingSeconds
+
+        // If overrun exceeds 5 minutes, the session is stale — complete it and reset to idle
+        if overrun > 300 {
+            timer?.invalidate()
+            timer = nil
+            if var session = currentSession {
+                session.complete()
+                saveSession(session)
+            }
+            currentSession = nil
+
+            // Send notification about the completed session
+            let completedPhase = state.phase
+            switch completedPhase {
+            case .focus:
+                NotificationService.sendFocusComplete(soundEnabled: settings.soundEnabled)
+            case .shortBreak:
+                NotificationService.sendShortBreakComplete(soundEnabled: settings.soundEnabled)
+            case .longBreak:
+                NotificationService.sendLongBreakComplete(soundEnabled: settings.soundEnabled)
+            case .idle:
+                break
+            }
+
+            // Reset to idle instead of transitioning to the next phase
+            state.transition(action: .reset, settings: settings)
+            return
+        }
+
         if elapsedWhileSleeping >= state.remainingSeconds {
             state.remainingSeconds = 0
             timerCompleted()

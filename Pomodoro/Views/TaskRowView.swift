@@ -12,7 +12,7 @@ struct TaskRowView: View {
         HStack(spacing: 8) {
             selectionIndicator
                 .onTapGesture(perform: onSelect)
-                .accessibilityLabel(task.isSelected ? "선택 해제" : "작업 선택")
+                .accessibilityLabel(task.isSelected ? String(localized: "a11y.deselect") : String(localized: "a11y.select"))
 
             if let timeLabel = task.timeLabel {
                 Text(timeLabel)
@@ -24,7 +24,8 @@ struct TaskRowView: View {
                 .font(.system(size: 11, weight: task.isSelected ? .medium : .regular, design: .rounded))
                 .strikethrough(task.isCompleted)
                 .foregroundStyle(titleColor)
-                .lineLimit(1)
+                .lineLimit(task.isSelected ? nil : 1)
+                .help(task.title)
 
             Spacer(minLength: 0)
 
@@ -40,7 +41,7 @@ struct TaskRowView: View {
                     .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color.pomodoroBreak) : AnyShapeStyle(.tertiary))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(task.isCompleted ? "완료 취소" : "완료")
+            .accessibilityLabel(task.isCompleted ? String(localized: "a11y.undoComplete") : String(localized: "a11y.complete"))
         }
         .padding(.vertical, 4)
         .padding(.horizontal, 8)
@@ -50,7 +51,7 @@ struct TaskRowView: View {
         .contentShape(Rectangle())
         .contextMenu {
             if task.source == .manual {
-                Button("삭제", role: .destructive, action: onDelete)
+                Button(String(localized: "delete"), role: .destructive, action: onDelete)
             }
         }
     }

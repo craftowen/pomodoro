@@ -1,0 +1,58 @@
+/* PopoverView */
+"settings" = "设置";
+"back" = "返回";
+"quit" = "退出";
+
+/* TimerView */
+"ready" = "准备";
+"start" = "开始";
+"pomodoro.cycle" = "番茄钟 %lld/4";
+"shortBreak" = "短休息";
+"longBreak" = "长休息";
+"next.pomodoro" = "下一个: 番茄钟 %lld/4";
+"next.newCycle" = "下一个: 新循环";
+"a11y.resume" = "继续";
+"a11y.pause" = "暂停";
+"a11y.reset" = "重置";
+"a11y.skip" = "跳过";
+"a11y.startPomodoro" = "开始番茄钟";
+
+/* TaskListView */
+"today.tasks" = "今日任务";
+"no.tasks" = "今天没有计划的任务";
+"task.placeholder" = "输入任务";
+"cancel" = "取消";
+"add" = "添加";
+
+/* TaskRowView */
+"a11y.deselect" = "取消选择";
+"a11y.select" = "选择任务";
+"a11y.undoComplete" = "取消完成";
+"a11y.complete" = "完成";
+"delete" = "删除";
+
+/* InlineSettingsView */
+"settings.title" = "设置";
+"settings.timer" = "计时器";
+"settings.pomodoro" = "番茄钟";
+"settings.duration" = "%lld分钟";
+"settings.shortBreak" = "短休息";
+"settings.longBreak" = "长休息";
+"settings.autoStart" = "自动开始";
+"settings.shortcuts" = "快捷键";
+"settings.startStop" = "开始/停止";
+"settings.calendar" = "日历";
+"settings.refreshEvents" = "刷新日程";
+"settings.calendarDescription" = "导入macOS日历中所有帐户的日程。";
+"settings.allowCalendar" = "允许访问日历";
+"settings.general" = "通用";
+"settings.launchAtLogin" = "登录时启动";
+"settings.sound" = "提示音";
+
+/* NotificationService */
+"notification.focusComplete.title" = "番茄钟完成！";
+"notification.focusComplete.body" = "休息时间 ☕";
+"notification.shortBreakComplete.title" = "休息结束！";
+"notification.shortBreakComplete.body" = "开始下一个番茄钟";
+"notification.longBreakComplete.title" = "长休息结束！";
+"notification.longBreakComplete.body" = "开始新的循环";

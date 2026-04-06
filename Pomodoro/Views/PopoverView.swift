@@ -34,13 +34,13 @@ struct PopoverView: View {
                             .foregroundStyle(.quaternary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("설정")
+                    .accessibilityLabel(String(localized: "settings"))
                 } else {
                     Button(action: { activeTab = .main }) {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 9, weight: .semibold))
-                            Text("돌아가기")
+                            Text(String(localized: "back"))
                                 .font(.system(size: 10, design: .rounded))
                         }
                         .foregroundStyle(.secondary)
@@ -51,12 +51,12 @@ struct PopoverView: View {
                 Spacer()
 
                 Button(action: { NSApplication.shared.terminate(nil) }) {
-                    Text("종료")
+                    Text(String(localized: "quit"))
                         .font(.system(size: 10, design: .rounded))
                         .foregroundStyle(.quaternary)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("앱 종료")
+                .accessibilityLabel(String(localized: "quit"))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)

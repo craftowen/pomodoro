@@ -80,7 +80,7 @@ struct TimerView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(timerVM.state.isPaused ? "재개" : "일시정지")
+                    .accessibilityLabel(timerVM.state.isPaused ? String(localized: "a11y.resume") : String(localized: "a11y.pause"))
 
                     Button(action: { timerVM.reset() }) {
                         Image(systemName: "arrow.counterclockwise")
@@ -88,7 +88,7 @@ struct TimerView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("리셋")
+                    .accessibilityLabel(String(localized: "a11y.reset"))
                 } else {
                     Button(action: { timerVM.reset() }) {
                         Image(systemName: "arrow.counterclockwise")
@@ -96,7 +96,7 @@ struct TimerView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("리셋")
+                    .accessibilityLabel(String(localized: "a11y.reset"))
 
                     Button(action: { timerVM.skip() }) {
                         Image(systemName: "forward.fill")
@@ -104,7 +104,7 @@ struct TimerView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("건너뛰기")
+                    .accessibilityLabel(String(localized: "a11y.skip"))
                 }
             }
             .padding(.top, 4)
@@ -113,12 +113,12 @@ struct TimerView: View {
 
     private var idleInfo: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("준비")
+            Text(String(localized: "ready"))
                 .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundStyle(.secondary)
 
             Button(action: { timerVM.toggleStartPause() }) {
-                Text("시작")
+                Text(String(localized: "start"))
                     .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
@@ -127,7 +127,7 @@ struct TimerView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("포모도로 시작")
+            .accessibilityLabel(String(localized: "a11y.startPomodoro"))
         }
     }
 
@@ -141,8 +141,8 @@ struct TimerView: View {
 
     private var breakLabel: String {
         switch timerVM.state.phase {
-        case .shortBreak: "☕ 짧은 휴식"
-        case .longBreak: "☕ 긴 휴식"
+        case .shortBreak: "☕ \(String(localized: "shortBreak"))"
+        case .longBreak: "☕ \(String(localized: "longBreak"))"
         default: ""
         }
     }
@@ -150,11 +150,11 @@ struct TimerView: View {
     private var phaseSubtitle: String {
         switch timerVM.state.phase {
         case .focus:
-            "포모도로 \(timerVM.state.cycleCount + 1)/4"
+            String(format: String(localized: "pomodoro.cycle"), timerVM.state.cycleCount + 1)
         case .shortBreak:
-            "다음: 포모도로 \(timerVM.state.cycleCount + 1)/4"
+            String(format: String(localized: "next.pomodoro"), timerVM.state.cycleCount + 1)
         case .longBreak:
-            "다음: 새 사이클"
+            String(localized: "next.newCycle")
         case .idle:
             ""
         }
