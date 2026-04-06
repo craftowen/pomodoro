@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Build release
+        run: |
+          swift build -c release 2>&1
+
+          APP_DIR=".build/release/Pomodoro.app/Contents"
+          mkdir -p "$APP_DIR/MacOS"
+
+          cp .build/release/Pomodoro "$APP_DIR/MacOS/Pomodoro"
+          cp Pomodoro/Info.plist "$APP_DIR/Info.plist"
+
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleIdentifier" "$APP_DIR/Info.plist" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string com.pomodoro.app" "$APP_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleName" "$APP_DIR/Info.plist" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleName string Pomodoro" "$APP_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :CFBundlePackageType" "$APP_DIR/Info.plist" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundlePackageType string APPL" "$APP_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :NSPrincipalClass" "$APP_DIR/Info.plist" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSPrincipalClass string NSApplication" "$APP_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleShortVersionString" "$APP_DIR/Info.plist" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$APP_DIR/Info.plist"
+
+      - name: Create zip
+        run: |
+          cd .build/release
+          zip -r Pomodoro.app.zip Pomodoro.app
+
+      - name: Compute SHA256
+        run: |
+          SHA=$(shasum -a 256 .build/release/Pomodoro.app.zip | awk '{print $1}')
+          echo "SHA256=$SHA" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: .build/release/Pomodoro.app.zip
+          generate_release_notes: true
+
+      - name: Update Cask formula
+        run: scripts/update-cask.sh "$VERSION" "$SHA256"
+
+      - name: Commit updated Cask
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git add Casks/pomodoro.rb
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: update Homebrew Cask to v${VERSION}"
+          git push
