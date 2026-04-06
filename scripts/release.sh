@@ -35,9 +35,12 @@ SPARKLE_FW=$(find .build/artifacts -name "Sparkle.framework" -path "*/macos*" -t
 if [ -n "$SPARKLE_FW" ]; then
     cp -R "$SPARKLE_FW" "$APP_DIR/Frameworks/"
     install_name_tool -add_rpath @executable_path/../Frameworks "$APP_DIR/MacOS/Pomodoro" 2>/dev/null || true
+else
+    echo "Warning: Sparkle.framework not found. Auto-update will not work."
 fi
 
-# Ad-hoc sign with entitlements for EventKit access
+# Ad-hoc sign embedded frameworks first, then the app
+codesign --force --sign - "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
 codesign --force --sign - --entitlements Pomodoro/Pomodoro.entitlements .build/release/Pomodoro.app
 
 # Create zip for distribution

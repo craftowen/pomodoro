@@ -44,6 +44,8 @@ jobs:
           if [ -n "$SPARKLE_FW" ]; then
               cp -R "$SPARKLE_FW" "$APP_DIR/Frameworks/"
               install_name_tool -add_rpath @executable_path/../Frameworks "$APP_DIR/MacOS/Pomodoro" 2>/dev/null || true
+          else
+              echo "Warning: Sparkle.framework not found. Auto-update will not work."
           fi
 
           /usr/libexec/PlistBuddy -c "Delete :CFBundleIdentifier" "$APP_DIR/Info.plist" 2>/dev/null || true
@@ -57,7 +59,8 @@ jobs:
           /usr/libexec/PlistBuddy -c "Delete :CFBundleShortVersionString" "$APP_DIR/Info.plist" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$APP_DIR/Info.plist"
 
-          # Ad-hoc sign
+          # Ad-hoc sign embedded frameworks first, then the app
+          codesign --force --sign - "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
           codesign --force --sign - --entitlements Pomodoro/Pomodoro.entitlements .build/release/Pomodoro.app
 
       - name: Create zip
