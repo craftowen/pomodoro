@@ -21,6 +21,11 @@ cask "pomodoro" do
 
   app "Pomodoro.app"
 
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-cr", "#{appdir}/Pomodoro.app"]
+  end
+
   zap trash: [
     "~/Library/Preferences/com.pomodoro.app.plist",
     "~/Library/Application Support/Pomodoro",
