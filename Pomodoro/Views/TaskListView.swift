@@ -28,7 +28,7 @@ struct TaskListView: View {
                         ForEach(taskVM.todayTasks) { task in
                             TaskRowView(
                                 task: task,
-                                onSelect: { taskVM.toggleSelection(task) },
+                                onSelect: { taskVM.selectTask(task) },
                                 onComplete: { taskVM.toggleCompletion(task) },
                                 onDelete: { taskVM.deleteTask(task) }
                             )

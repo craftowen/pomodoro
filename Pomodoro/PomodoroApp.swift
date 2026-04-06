@@ -6,140 +6,138 @@ import KeyboardShortcuts
 struct PomodoroApp: App {
     @State private var timerVM = TimerViewModel()
     @State private var taskVM = TaskViewModel()
-    @State private var statusItemConfigurator = StatusItemConfigurator()
-
     var body: some Scene {
         MenuBarExtra {
             PopoverView(timerVM: timerVM, taskVM: taskVM)
-                .frame(width: 280, height: 400)
+                .frame(width: 320, height: 400)
                 .onChange(of: taskVM.selectedTask?.id) { _, newId in
                     timerVM.state.currentTaskId = newId
                 }
         } label: {
-            Text(menuBarTitle)
-                .onChange(of: timerVM.state.remainingSeconds) { _, _ in
-                    statusItemConfigurator.updateImage(
-                        isActive: timerVM.state.isActive,
-                        progress: timerVM.state.progress,
-                        phase: timerVM.state.phase
-                    )
-                }
-                .onChange(of: timerVM.state.phase) { _, _ in
-                    statusItemConfigurator.updateImage(
-                        isActive: timerVM.state.isActive,
-                        progress: timerVM.state.progress,
-                        phase: timerVM.state.phase
-                    )
-                }
-                .onAppear {
-                    statusItemConfigurator.updateImage(
-                        isActive: timerVM.state.isActive,
-                        progress: timerVM.state.progress,
-                        phase: timerVM.state.phase
-                    )
-                }
+            if timerVM.state.isActive {
+                Image(nsImage: StatusItemConfigurator.makeStatusBarImage(
+                    taskName: menuBarTaskName,
+                    time: menuBarTime,
+                    progress: timerVM.state.progress,
+                    phase: timerVM.state.phase,
+                    isPaused: timerVM.state.isPaused
+                ))
+            } else {
+                Text(menuBarTitle)
+            }
         }
         .menuBarExtraStyle(.window)
     }
 
     private var menuBarTitle: String {
-        let state = timerVM.state
-
-        switch state.phase {
-        case .idle:
-            if let task = taskVM.selectedTask {
-                return "🍅 \(task.truncatedTitle)"
-            }
-            return "🍅"
-
-        case .focus:
-            let prefix = state.isPaused ? "⏸ " : ""
-            if let task = taskVM.selectedTask {
-                return "\(prefix)\(task.truncatedTitle) \(state.displayTime)"
-            }
-            return "\(prefix)\(state.displayTime)"
-
-        case .shortBreak, .longBreak:
-            return "☕ \(state.displayTime)"
+        if let task = taskVM.selectedTask {
+            return "🍅 \(task.truncatedTitle)"
         }
+        return "🍅"
+    }
+
+    private var menuBarTaskName: String? {
+        switch timerVM.state.phase {
+        case .focus:
+            let prefix = timerVM.state.isPaused ? "⏸ " : ""
+            if let task = taskVM.selectedTask {
+                return "\(prefix)\(task.truncatedTitle)"
+            }
+            return timerVM.state.isPaused ? "⏸" : nil
+        case .shortBreak, .longBreak:
+            return "☕"
+        case .idle:
+            return nil
+        }
+    }
+
+    private var menuBarTime: String {
+        timerVM.state.displayTime
     }
 }
 
-@MainActor
-final class StatusItemConfigurator {
-    private weak var button: NSStatusBarButton?
-
-    func updateImage(isActive: Bool, progress: Double, phase: TimerPhase) {
-        let btn = findButton()
-        if isActive {
-            btn?.image = makeProgressImage(progress: progress, phase: phase)
-            btn?.imagePosition = .imageLeading
-        } else {
-            btn?.image = nil
-        }
-    }
-
-    private func findButton() -> NSStatusBarButton? {
-        if let b = button { return b }
-        for window in NSApp.windows {
-            if let btn = searchForButton(in: window.contentView) {
-                button = btn
-                return btn
-            }
-        }
-        return nil
-    }
-
-    private func searchForButton(in view: NSView?) -> NSStatusBarButton? {
-        guard let view else { return nil }
-        if let btn = view as? NSStatusBarButton { return btn }
-        for sub in view.subviews {
-            if let btn = searchForButton(in: sub) { return btn }
-        }
-        return nil
-    }
-
-    private func makeProgressImage(progress: Double, phase: TimerPhase) -> NSImage {
-        let size: CGFloat = 16
-        let lineWidth: CGFloat = 2.0
+enum StatusItemConfigurator {
+    /// 원형 프로그레스 링 + 태스크명(흰색) + 시간(accent) 렌더링
+    static func makeStatusBarImage(taskName: String?, time: String, progress: Double, phase: TimerPhase, isPaused: Bool) -> NSImage {
+        let ringSize: CGFloat = 16
+        let lineWidth: CGFloat = 2.5
+        let ringTextGap: CGFloat = 4
         let scale: CGFloat = 2.0
-        let pixelSize = Int(size * scale)
+
+        // 시간 색상: accent color
+        let timeColor: NSColor = switch phase {
+        case .focus: NSColor(srgbRed: 1.0, green: 0.50, blue: 0.50, alpha: 1)
+        case .shortBreak, .longBreak: NSColor(srgbRed: 0.50, green: 0.88, blue: 0.55, alpha: 1)
+        case .idle: NSColor.white
+        }
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .medium)
+
+        // 태스크명 (흰색) + 시간 (accent) 조합
+        let combined = NSMutableAttributedString()
+        if let name = taskName {
+            combined.append(NSAttributedString(string: "\(name) ", attributes: [
+                .font: font,
+                .foregroundColor: NSColor.white.withAlphaComponent(0.85)
+            ]))
+        }
+        combined.append(NSAttributedString(string: time, attributes: [
+            .font: font,
+            .foregroundColor: timeColor
+        ]))
+
+        let textSize = combined.size()
+        let totalWidth = ringSize + ringTextGap + textSize.width
+        let totalHeight = max(ringSize, textSize.height)
+
+        let pixelW = Int(totalWidth * scale)
+        let pixelH = Int(totalHeight * scale)
 
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         guard let ctx = CGContext(
-            data: nil, width: pixelSize, height: pixelSize,
+            data: nil, width: pixelW, height: pixelH,
             bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace,
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return NSImage() }
 
         ctx.scaleBy(x: scale, y: scale)
 
-        let center = CGPoint(x: size / 2, y: size / 2)
-        let radius = (size - lineWidth) / 2
+        // --- 원형 프로그레스 링 ---
+        let ringCenterY = totalHeight / 2
+        let ringCenter = CGPoint(x: ringSize / 2, y: ringCenterY)
+        let radius = (ringSize - lineWidth) / 2
 
-        // Background track
+        // 배경 트랙
         ctx.setLineWidth(lineWidth)
-        ctx.setStrokeColor(CGColor(gray: 0.5, alpha: 0.35))
-        ctx.addArc(center: center, radius: radius, startAngle: 0, endAngle: .pi * 2, clockwise: false)
+        ctx.setStrokeColor(CGColor(gray: 1.0, alpha: 0.2))
+        ctx.addArc(center: ringCenter, radius: radius, startAngle: 0, endAngle: .pi * 2, clockwise: false)
         ctx.strokePath()
 
-        // Progress arc
+        // 프로그레스 아크
         if progress > 0.005 {
             let startAngle = CGFloat.pi / 2
             let endAngle = startAngle - CGFloat(progress) * 2 * .pi
             ctx.setLineCap(.round)
-            let color: CGColor = switch phase {
-            case .focus: CGColor(srgbRed: 1, green: 0.23, blue: 0.19, alpha: 1)
-            case .shortBreak, .longBreak: CGColor(srgbRed: 0.2, green: 0.78, blue: 0.35, alpha: 1)
-            case .idle: CGColor(gray: 0.5, alpha: 0.35)
+            let arcColor: CGColor = switch phase {
+            case .focus: CGColor(srgbRed: 1.0, green: 0.40, blue: 0.40, alpha: 1)
+            case .shortBreak, .longBreak: CGColor(srgbRed: 0.40, green: 0.85, blue: 0.45, alpha: 1)
+            case .idle: CGColor(gray: 0.5, alpha: 0.3)
             }
-            ctx.setStrokeColor(color)
-            ctx.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
+            ctx.setStrokeColor(arcColor)
+            ctx.addArc(center: ringCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
             ctx.strokePath()
         }
 
+        // --- 텍스트 ---
+        let nsCtx = NSGraphicsContext(cgContext: ctx, flipped: false)
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = nsCtx
+        let textX = ringSize + ringTextGap
+        let textY = (totalHeight - textSize.height) / 2
+        combined.draw(at: NSPoint(x: textX, y: textY))
+        NSGraphicsContext.restoreGraphicsState()
+
         guard let cgImage = ctx.makeImage() else { return NSImage() }
-        let image = NSImage(cgImage: cgImage, size: NSSize(width: size, height: size))
+        let image = NSImage(cgImage: cgImage, size: NSSize(width: totalWidth, height: totalHeight))
         image.isTemplate = false
         return image
     }

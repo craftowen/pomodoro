@@ -36,8 +36,8 @@ struct TaskItem: Codable, Identifiable {
     }
 
     var truncatedTitle: String {
-        if title.count > 15 {
-            return String(title.prefix(15)) + "..."
+        if title.count > 20 {
+            return String(title.prefix(20)) + "..."
         }
         return title
     }

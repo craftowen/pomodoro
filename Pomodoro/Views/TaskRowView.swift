@@ -11,7 +11,6 @@ struct TaskRowView: View {
     var body: some View {
         HStack(spacing: 8) {
             selectionIndicator
-                .onTapGesture(perform: onSelect)
                 .accessibilityLabel(task.isSelected ? String(localized: "a11y.deselect") : String(localized: "a11y.select"))
 
             if let timeLabel = task.timeLabel {
@@ -49,6 +48,7 @@ struct TaskRowView: View {
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .onHover { isHovered = $0 }
         .contentShape(Rectangle())
+        .onTapGesture(perform: onSelect)
         .contextMenu {
             if task.source == .manual {
                 Button(String(localized: "delete"), role: .destructive, action: onDelete)
