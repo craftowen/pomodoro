@@ -12,52 +12,60 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            switch activeTab {
-            case .main:
-                mainContent
-            case .settings:
-                settingsContent
+            Group {
+                switch activeTab {
+                case .main:
+                    mainContent
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                case .settings:
+                    settingsContent
+                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                }
             }
+            .animation(.easeInOut(duration: 0.25), value: activeTab)
 
             Divider()
 
             HStack {
                 if activeTab == .main {
-                    Button {
-                        activeTab = .settings
-                    } label: {
-                        Label("설정", systemImage: "gear")
-                            .font(.caption)
+                    Button(action: { activeTab = .settings }) {
+                        Image(systemName: "gear")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.quaternary)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("설정")
                 } else {
-                    Button {
-                        activeTab = .main
-                    } label: {
-                        Label("돌아가기", systemImage: "chevron.left")
-                            .font(.caption)
+                    Button(action: { activeTab = .main }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 9, weight: .semibold))
+                            Text("돌아가기")
+                                .font(.system(size: 10, design: .rounded))
+                        }
+                        .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
                 }
 
                 Spacer()
 
-                Button("종료") {
-                    NSApplication.shared.terminate(nil)
+                Button(action: { NSApplication.shared.terminate(nil) }) {
+                    Text("종료")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(.quaternary)
                 }
                 .buttonStyle(.plain)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .accessibilityLabel("앱 종료")
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 6)
         }
     }
 
     private var mainContent: some View {
         VStack(spacing: 0) {
-            TimerView(timerVM: timerVM)
-                .padding(.horizontal)
+            TimerView(timerVM: timerVM, currentTaskName: taskVM.selectedTask?.title)
 
             Divider()
 
