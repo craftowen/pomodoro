@@ -4,7 +4,7 @@ import EventKit
 final class CalendarService {
     static let shared = CalendarService()
 
-    private var store = EKEventStore()
+    nonisolated(unsafe) private var store = EKEventStore()
 
     var isAuthorized: Bool {
         EKEventStore.authorizationStatus(for: .event) == .fullAccess
