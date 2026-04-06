@@ -3,5 +3,15 @@
     <channel>
         <title>Pomodoro Updates</title>
         <language>en</language>
+        <item>
+            <title>Version 0.2.0</title>
+            <pubDate>Mon, 06 Apr 2026 23:39:56 +0000</pubDate>
+            <sparkle:version>0.2.0</sparkle:version>
+            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+            <enclosure url="https://github.com/craftowen/pomodoro/releases/download/v0.2.0/Pomodoro.app.zip"
+                       sparkle:edSignature="y7iW1pzNQWjX6ftaoXPgUnNgGfz2Z0MnrRMIWLeCY0k60y7sLaWZ/cWn7dV+FIAbreJfl7xlQenvuXrfIHKcCw=="
+                       length="3621715"
+                       type="application/octet-stream"/>
+        </item>
     </channel>
 </rss>
