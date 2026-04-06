@@ -81,7 +81,9 @@ final class TimerViewModel {
     private func startTimer() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.tick()
+            MainActor.assumeIsolated {
+                self?.tick()
+            }
         }
         RunLoop.current.add(timer!, forMode: .common)
     }
@@ -163,7 +165,9 @@ final class TimerViewModel {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.sleepTime = Date()
+            MainActor.assumeIsolated {
+                self?.sleepTime = Date()
+            }
         }
 
         let wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
@@ -171,7 +175,9 @@ final class TimerViewModel {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.handleWake()
+            MainActor.assumeIsolated {
+                self?.handleWake()
+            }
         }
 
         workspaceObservers = [sleepObserver, wakeObserver]

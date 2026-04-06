@@ -46,7 +46,7 @@ struct TimerView: View {
 
             if timerVM.state.isActive {
                 Text(timerVM.state.displayTime)
-                    .font(.system(size: 13, weight: .regular, design: .monospaced))
+                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
                     .foregroundStyle(.primary)
             } else {
                 Text("🍅")

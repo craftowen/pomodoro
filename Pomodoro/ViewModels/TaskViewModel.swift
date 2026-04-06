@@ -49,18 +49,14 @@ final class TaskViewModel {
         saveTasks()
     }
 
-    func toggleSelection(_ task: TaskItem) {
+    func selectTask(_ task: TaskItem) {
         guard let index = tasks.firstIndex(where: { $0.id == task.id }) else { return }
+        guard !tasks[index].isSelected else { return }
 
-        if tasks[index].isSelected {
-            tasks[index].isSelected = false
-        } else {
-            // Deselect all others
-            for i in tasks.indices {
-                tasks[i].isSelected = false
-            }
-            tasks[index].isSelected = true
+        for i in tasks.indices {
+            tasks[i].isSelected = false
         }
+        tasks[index].isSelected = true
         saveTasks()
     }
 
