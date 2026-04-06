@@ -49,6 +49,7 @@
 "settings.general" = "通用";
 "settings.launchAtLogin" = "登录时启动";
 "settings.sound" = "提示音";
+"settings.checkForUpdate" = "检查更新";
 "settings.checkForUpdates" = "检查更新";
 
 /* NotificationService */

@@ -24,6 +24,11 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .testTarget(
+            name: "PomodoroTests",
+            dependencies: ["Pomodoro"],
+            path: "PomodoroTests"
         )
     ]
 )

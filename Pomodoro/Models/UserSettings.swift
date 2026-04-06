@@ -2,7 +2,7 @@ import Foundation
 import KeyboardShortcuts
 
 extension KeyboardShortcuts.Name {
-    static let toggleTimer = Self("toggleTimer")
+    static let toggleTimer = Self("toggleTimer", default: .init(.p, modifiers: [.command, .shift]))
 }
 
 @MainActor

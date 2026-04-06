@@ -155,7 +155,7 @@ struct InlineSettingsView: View {
                         .controlSize(.mini)
                 }
 
-                settingsRow(String(localized: "settings.checkForUpdates")) {
+                settingsRow(checkForUpdatesLabel) {
                     Button {
                         updaterService.checkForUpdates()
                     } label: {
@@ -236,6 +236,22 @@ struct InlineSettingsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+    }
+
+    private var checkForUpdatesLabel: String {
+        let currentKey = "settings.checkForUpdates"
+        let currentValue = String(localized: "settings.checkForUpdates", defaultValue: "settings.checkForUpdates")
+        if currentValue != currentKey {
+            return currentValue
+        }
+
+        let legacyKey = "settings.checkForUpdate"
+        let legacyValue = String(localized: "settings.checkForUpdate", defaultValue: "settings.checkForUpdate")
+        if legacyValue != legacyKey {
+            return legacyValue
+        }
+
+        return "Check for Updates"
     }
 
     private func refreshCalendarConnection() {

@@ -4,7 +4,7 @@ import EventKit
 final class CalendarService {
     static let shared = CalendarService()
 
-    private let store = EKEventStore()
+    private var store = EKEventStore()
 
     var isAuthorized: Bool {
         EKEventStore.authorizationStatus(for: .event) == .fullAccess
@@ -12,11 +12,19 @@ final class CalendarService {
 
     func requestAccess() async -> Bool {
         do {
-            let store = EKEventStore()
-            return try await store.requestFullAccessToEvents()
+            let granted = try await store.requestFullAccessToEvents()
+            if granted {
+                refreshStore()
+            }
+            return granted
         } catch {
             return false
         }
+    }
+
+    func refreshStore() {
+        store.reset()
+        store = EKEventStore()
     }
 
     func availableCalendars() -> [EKCalendar] {

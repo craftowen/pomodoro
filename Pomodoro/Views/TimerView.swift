@@ -5,20 +5,30 @@ struct TimerView: View {
     var currentTaskName: String?
 
     var body: some View {
-        HStack(spacing: 14) {
-            timerRing
-                .frame(width: 56, height: 56)
-
+        Group {
             if timerVM.state.isActive {
-                activeInfo
-            } else {
-                idleInfo
-            }
+                HStack(spacing: 14) {
+                    timerRing
+                        .frame(width: 56, height: 56)
 
-            Spacer(minLength: 0)
+                    activeInfo
+
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 16)
+            } else {
+                VStack(spacing: 14) {
+                    timerRing
+                        .frame(width: 64, height: 64)
+
+                    idleInfo
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 24)
+            }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
     }
 
     private var timerRing: some View {
@@ -69,14 +79,14 @@ struct TimerView: View {
             }
 
             Text(phaseSubtitle)
-                .font(.system(size: 10, weight: .regular, design: .rounded))
+                .font(.system(size: 11, weight: .regular, design: .rounded))
                 .foregroundStyle(.secondary)
 
             HStack(spacing: 16) {
                 if timerVM.state.phase == .focus {
                     Button(action: { timerVM.toggleStartPause() }) {
                         Image(systemName: timerVM.state.isPaused ? "play.fill" : "pause.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
@@ -84,7 +94,7 @@ struct TimerView: View {
 
                     Button(action: { timerVM.reset() }) {
                         Image(systemName: "arrow.counterclockwise")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
@@ -92,7 +102,7 @@ struct TimerView: View {
                 } else {
                     Button(action: { timerVM.reset() }) {
                         Image(systemName: "arrow.counterclockwise")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
@@ -100,7 +110,7 @@ struct TimerView: View {
 
                     Button(action: { timerVM.skip() }) {
                         Image(systemName: "forward.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
@@ -112,19 +122,19 @@ struct TimerView: View {
     }
 
     private var idleInfo: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(spacing: 8) {
             Text(String(localized: "ready"))
-                .font(.system(size: 13, weight: .regular, design: .rounded))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .foregroundStyle(.primary)
 
             Button(action: { timerVM.toggleStartPause() }) {
                 Text(String(localized: "start"))
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 6)
                     .background(Color.pomodoroFocus)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
             }
             .buttonStyle(.plain)
             .accessibilityLabel(String(localized: "a11y.startPomodoro"))

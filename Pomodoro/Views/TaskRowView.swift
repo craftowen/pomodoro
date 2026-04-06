@@ -16,11 +16,11 @@ struct TaskRowView: View {
             if let timeLabel = task.timeLabel {
                 Text(timeLabel)
                     .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.secondary)
             }
 
             Text(task.title)
-                .font(.system(size: 11, weight: task.isSelected ? .medium : .regular, design: .rounded))
+                .font(.system(size: 13, weight: task.isSelected ? .medium : .regular, design: .rounded))
                 .strikethrough(task.isCompleted)
                 .foregroundStyle(titleColor)
                 .lineLimit(task.isSelected ? nil : 1)
@@ -30,19 +30,19 @@ struct TaskRowView: View {
 
             if task.source == .googleCalendar || task.source == .systemCalendar {
                 Image(systemName: "calendar")
-                    .font(.system(size: 9))
-                    .foregroundStyle(.quaternary)
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
             }
 
             Button(action: onComplete) {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "checkmark.circle")
-                    .font(.system(size: 12))
-                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color.pomodoroBreak) : AnyShapeStyle(.tertiary))
+                    .font(.system(size: 14))
+                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color.pomodoroBreak) : AnyShapeStyle(.secondary))
             }
             .buttonStyle(.plain)
             .accessibilityLabel(task.isCompleted ? String(localized: "a11y.undoComplete") : String(localized: "a11y.complete"))
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
         .padding(.horizontal, 8)
         .background(rowBackground)
         .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -60,17 +60,17 @@ struct TaskRowView: View {
         ZStack {
             Circle()
                 .stroke(task.isSelected ? Color.pomodoroFocus : Color.gray.opacity(0.3), lineWidth: 1.5)
-                .frame(width: 12, height: 12)
+                .frame(width: 14, height: 14)
 
             if task.isSelected {
                 Circle()
                     .fill(Color.pomodoroFocus)
-                    .frame(width: 5, height: 5)
+                    .frame(width: 6, height: 6)
             }
 
             if task.isCompleted {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 7, weight: .bold))
+                    .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(Color.pomodoroBreak)
             }
         }
@@ -92,8 +92,7 @@ struct TaskRowView: View {
     }
 
     private var titleColor: some ShapeStyle {
-        if task.isCompleted { return AnyShapeStyle(.tertiary) }
-        if task.isSelected { return AnyShapeStyle(.primary) }
-        return AnyShapeStyle(.secondary)
+        if task.isCompleted { return AnyShapeStyle(.secondary) }
+        return AnyShapeStyle(.primary)
     }
 }

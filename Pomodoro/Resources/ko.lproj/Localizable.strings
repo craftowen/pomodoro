@@ -49,6 +49,7 @@
 "settings.general" = "일반";
 "settings.launchAtLogin" = "로그인 시 자동 시작";
 "settings.sound" = "알림 사운드";
+"settings.checkForUpdate" = "업데이트 확인";
 "settings.checkForUpdates" = "업데이트 확인";
 
 /* NotificationService */

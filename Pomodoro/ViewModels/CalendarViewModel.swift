@@ -1,5 +1,6 @@
 import Foundation
 import EventKit
+import AppKit
 
 struct CalendarInfo: Identifiable {
     let id: String
@@ -13,6 +14,7 @@ final class CalendarViewModel {
     var isAuthorized: Bool = false
     var calendars: [CalendarInfo] = []
     var errorMessage: String?
+    var awaitingPermission: Bool = false
 
     private let service = CalendarService.shared
     private let settings = UserSettings.shared
@@ -22,11 +24,40 @@ final class CalendarViewModel {
     }
 
     func requestAccess() async {
-        isAuthorized = await service.requestAccess()
-        if isAuthorized {
-            loadCalendars()
+        let status = EKEventStore.authorizationStatus(for: .event)
+
+        if status == .notDetermined {
+            // First time: show system dialog
+            isAuthorized = await service.requestAccess()
+            if isAuthorized {
+                errorMessage = nil
+                loadCalendars()
+            } else {
+                errorMessage = String(localized: "settings.calendarDenied")
+            }
         } else {
-            errorMessage = "캘린더 접근이 거부되었습니다. 시스템 설정 > 개인정보 보호에서 허용해주세요."
+            // Previously denied or restricted: open System Settings
+            awaitingPermission = true
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+    }
+
+    func refreshAuthStatus() {
+        let wasAwaiting = awaitingPermission
+        isAuthorized = service.isAuthorized
+        if isAuthorized {
+            awaitingPermission = false
+            errorMessage = nil
+            service.refreshStore()
+            loadCalendars()
+        } else if wasAwaiting {
+            awaitingPermission = false
+            calendars = []
+            errorMessage = String(localized: "settings.calendarDenied")
+        } else {
+            calendars = []
         }
     }
 
@@ -38,7 +69,10 @@ final class CalendarViewModel {
 
     func syncEvents(into taskVM: TaskViewModel) {
         let selectedIds = settings.selectedCalendarIds
-        guard !selectedIds.isEmpty else { return }
+        guard !selectedIds.isEmpty else {
+            taskVM.mergeCalendarEvents([])
+            return
+        }
 
         let events = service.fetchTodayEvents(calendarIds: selectedIds)
         taskVM.mergeCalendarEvents(events)

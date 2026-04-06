@@ -49,6 +49,7 @@
 "settings.general" = "General";
 "settings.launchAtLogin" = "Launch at Login";
 "settings.sound" = "Notification Sound";
+"settings.checkForUpdate" = "Check for Updates";
 "settings.checkForUpdates" = "Check for Updates";
 
 /* NotificationService */

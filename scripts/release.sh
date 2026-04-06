@@ -11,6 +11,7 @@ mkdir -p "$APP_DIR/Frameworks"
 
 cp .build/release/Pomodoro "$APP_DIR/MacOS/Pomodoro"
 cp Pomodoro/Info.plist "$APP_DIR/Info.plist"
+cp Pomodoro/Resources/AppIcon.icns "$APP_DIR/Resources/AppIcon.icns"
 
 # Copy localized strings into app bundle
 BUNDLE_DIR=$(find .build -path "*/release/Pomodoro_Pomodoro.bundle" -type d 2>/dev/null | head -1)
