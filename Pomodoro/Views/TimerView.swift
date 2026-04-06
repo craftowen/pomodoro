@@ -36,7 +36,12 @@ struct TimerView: View {
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 0.3), value: timerVM.state.progress)
                     .opacity(timerVM.state.isPaused ? 0.5 : 1.0)
-                    .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: timerVM.state.isPaused)
+                    .animation(
+                        timerVM.state.isPaused
+                            ? .easeInOut(duration: 1.0).repeatForever(autoreverses: true)
+                            : .default,
+                        value: timerVM.state.isPaused
+                    )
             }
 
             if timerVM.state.isActive {
@@ -118,7 +123,7 @@ struct TimerView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
-                    .background(Color(red: 1.0, green: 0.42, blue: 0.42))
+                    .background(Color.pomodoroFocus)
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             }
             .buttonStyle(.plain)
@@ -128,8 +133,8 @@ struct TimerView: View {
 
     private var phaseColor: Color {
         switch timerVM.state.phase {
-        case .focus: Color(red: 1.0, green: 0.42, blue: 0.42)
-        case .shortBreak, .longBreak: Color(red: 0.32, green: 0.81, blue: 0.40)
+        case .focus: Color.pomodoroFocus
+        case .shortBreak, .longBreak: Color.pomodoroBreak
         case .idle: .secondary
         }
     }

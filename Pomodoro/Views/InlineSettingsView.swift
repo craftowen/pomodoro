@@ -115,7 +115,7 @@ struct InlineSettingsView: View {
                     }
                     .buttonStyle(.plain)
                     .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(Color(red: 1.0, green: 0.42, blue: 0.42))
+                    .foregroundStyle(Color.pomodoroFocus)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
                 }

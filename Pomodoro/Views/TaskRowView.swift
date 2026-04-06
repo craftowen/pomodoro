@@ -37,7 +37,7 @@ struct TaskRowView: View {
             Button(action: onComplete) {
                 Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "checkmark.circle")
                     .font(.system(size: 12))
-                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color(red: 0.32, green: 0.81, blue: 0.40)) : AnyShapeStyle(.tertiary))
+                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color.pomodoroBreak) : AnyShapeStyle(.tertiary))
             }
             .buttonStyle(.plain)
             .accessibilityLabel(task.isCompleted ? "완료 취소" : "완료")
@@ -58,19 +58,19 @@ struct TaskRowView: View {
     private var selectionIndicator: some View {
         ZStack {
             Circle()
-                .stroke(task.isSelected ? Color(red: 1.0, green: 0.42, blue: 0.42) : Color.gray.opacity(0.3), lineWidth: 1.5)
+                .stroke(task.isSelected ? Color.pomodoroFocus : Color.gray.opacity(0.3), lineWidth: 1.5)
                 .frame(width: 12, height: 12)
 
             if task.isSelected {
                 Circle()
-                    .fill(Color(red: 1.0, green: 0.42, blue: 0.42))
+                    .fill(Color.pomodoroFocus)
                     .frame(width: 5, height: 5)
             }
 
             if task.isCompleted {
                 Image(systemName: "checkmark")
                     .font(.system(size: 7, weight: .bold))
-                    .foregroundStyle(Color(red: 0.32, green: 0.81, blue: 0.40))
+                    .foregroundStyle(Color.pomodoroBreak)
             }
         }
         .animation(.easeOut(duration: 0.15), value: task.isSelected)
@@ -79,7 +79,7 @@ struct TaskRowView: View {
     private var rowBackground: some View {
         Group {
             if task.isSelected {
-                Color(red: 1.0, green: 0.42, blue: 0.42).opacity(0.08)
+                Color.pomodoroFocus.opacity(0.08)
             } else if isHovered {
                 Color.primary.opacity(0.03)
             } else {
