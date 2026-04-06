@@ -12,6 +12,7 @@ final class CalendarService {
 
     func requestAccess() async -> Bool {
         do {
+            let store = EKEventStore()
             return try await store.requestFullAccessToEvents()
         } catch {
             return false
