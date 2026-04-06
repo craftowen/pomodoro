@@ -6,20 +6,19 @@ struct TaskListView: View {
     @State private var isAddingTask = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text("오늘 할 일")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
-                Spacer()
-            }
-            .padding(.horizontal, 12)
-            .padding(.top, 8)
+        VStack(alignment: .leading, spacing: 0) {
+            Text(String(localized: "today.tasks"))
+                .font(.system(size: 9, weight: .semibold, design: .rounded))
+                .foregroundStyle(.quaternary)
+                .textCase(.uppercase)
+                .tracking(1)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 6)
 
             if taskVM.todayTasks.isEmpty && !isAddingTask {
-                Text("오늘 예정된 일정이 없습니다")
-                    .font(.caption)
+                Text(String(localized: "no.tasks"))
+                    .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
@@ -35,42 +34,46 @@ struct TaskListView: View {
                             )
                         }
                     }
+                    .padding(.horizontal, 8)
                 }
                 .frame(maxHeight: 200)
             }
 
-            // Add task
             if isAddingTask {
-                HStack {
-                    TextField("할 일 입력", text: $newTaskTitle)
+                HStack(spacing: 8) {
+                    TextField(String(localized: "task.placeholder"), text: $newTaskTitle)
                         .textFieldStyle(.plain)
-                        .font(.system(size: 13))
+                        .font(.system(size: 11, design: .rounded))
                         .onSubmit {
                             taskVM.addTask(title: newTaskTitle)
                             newTaskTitle = ""
                             isAddingTask = false
                         }
 
-                    Button("취소") {
+                    Button(String(localized: "cancel")) {
                         newTaskTitle = ""
                         isAddingTask = false
                     }
                     .buttonStyle(.plain)
-                    .font(.caption)
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(.tertiary)
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
             } else {
                 Button(action: { isAddingTask = true }) {
-                    HStack {
+                    HStack(spacing: 4) {
                         Image(systemName: "plus")
-                        Text("할 일 추가")
+                            .font(.system(size: 9))
+                        Text(String(localized: "add"))
+                            .font(.system(size: 10, design: .rounded))
                     }
-                    .font(.caption)
+                    .foregroundStyle(.tertiary)
                 }
                 .buttonStyle(.plain)
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
             }
         }
-        .padding(.bottom, 8)
     }
 }

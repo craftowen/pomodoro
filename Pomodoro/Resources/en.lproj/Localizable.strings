@@ -1,0 +1,58 @@
+/* PopoverView */
+"settings" = "Settings";
+"back" = "Back";
+"quit" = "Quit";
+
+/* TimerView */
+"ready" = "Ready";
+"start" = "Start";
+"pomodoro.cycle" = "Pomodoro %lld/4";
+"shortBreak" = "Short Break";
+"longBreak" = "Long Break";
+"next.pomodoro" = "Next: Pomodoro %lld/4";
+"next.newCycle" = "Next: New cycle";
+"a11y.resume" = "Resume";
+"a11y.pause" = "Pause";
+"a11y.reset" = "Reset";
+"a11y.skip" = "Skip";
+"a11y.startPomodoro" = "Start Pomodoro";
+
+/* TaskListView */
+"today.tasks" = "Today's Tasks";
+"no.tasks" = "No tasks scheduled for today";
+"task.placeholder" = "Enter task";
+"cancel" = "Cancel";
+"add" = "Add";
+
+/* TaskRowView */
+"a11y.deselect" = "Deselect";
+"a11y.select" = "Select task";
+"a11y.undoComplete" = "Undo complete";
+"a11y.complete" = "Complete";
+"delete" = "Delete";
+
+/* InlineSettingsView */
+"settings.title" = "Settings";
+"settings.timer" = "Timer";
+"settings.pomodoro" = "Pomodoro";
+"settings.duration" = "%lld min";
+"settings.shortBreak" = "Short Break";
+"settings.longBreak" = "Long Break";
+"settings.autoStart" = "Auto Start";
+"settings.shortcuts" = "Shortcuts";
+"settings.startStop" = "Start/Stop";
+"settings.calendar" = "Calendar";
+"settings.refreshEvents" = "Refresh Events";
+"settings.calendarDescription" = "Import events from all calendar accounts on macOS.";
+"settings.allowCalendar" = "Allow Calendar Access";
+"settings.general" = "General";
+"settings.launchAtLogin" = "Launch at Login";
+"settings.sound" = "Notification Sound";
+
+/* NotificationService */
+"notification.focusComplete.title" = "Pomodoro Complete!";
+"notification.focusComplete.body" = "Time for a break ☕";
+"notification.shortBreakComplete.title" = "Break's Over!";
+"notification.shortBreakComplete.body" = "Start your next Pomodoro";
+"notification.longBreakComplete.title" = "Long Break Over!";
+"notification.longBreakComplete.body" = "Start a new cycle";

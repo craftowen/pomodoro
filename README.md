@@ -6,6 +6,37 @@ A lightweight macOS menu bar Pomodoro timer built with Swift 6 and SwiftUI.
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+## Installation
+
+### Homebrew (recommended)
+
+```bash
+brew install --cask pomodoro
+```
+
+If the app doesn't start due to macOS quarantine:
+
+```bash
+brew install --cask --no-quarantine pomodoro
+```
+
+### Build from source
+
+```bash
+# Clone the repository
+git clone https://github.com/tnlvof/pomodoro.git
+cd pomodoro
+
+# Build and run
+./run.sh
+```
+
+Or build manually:
+
+```bash
+swift build -c debug
+```
+
 ## Features
 
 - **Menu Bar App** — Lives in your menu bar, always accessible without cluttering your dock
@@ -22,23 +53,6 @@ A lightweight macOS menu bar Pomodoro timer built with Swift 6 and SwiftUI.
 
 - macOS 14.0 (Sonoma) or later
 - Swift 6.0 / Xcode 16+
-
-## Build & Run
-
-```bash
-# Clone the repository
-git clone https://github.com/tnlvof/pomodoro.git
-cd pomodoro
-
-# Build and run
-./run.sh
-```
-
-Or build manually:
-
-```bash
-swift build -c debug
-```
 
 ## How It Works
 
@@ -74,6 +88,15 @@ Pomodoro/
     ├── StorageService.swift    # Data persistence
     ├── NotificationService.swift # User notifications
     └── CalendarService.swift   # EventKit integration
+```
+
+## Release
+
+To create a release build:
+
+```bash
+./scripts/release.sh
+# Then create a GitHub release and upload Pomodoro.app.zip
 ```
 
 ## License

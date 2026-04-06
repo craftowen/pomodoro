@@ -18,14 +18,26 @@ struct NotificationService {
     }
 
     static func sendFocusComplete(soundEnabled: Bool) {
-        send(title: "포모도로 완료!", body: "휴식 시간입니다 ☕", soundEnabled: soundEnabled)
+        send(
+            title: String(localized: "notification.focusComplete.title"),
+            body: String(localized: "notification.focusComplete.body"),
+            soundEnabled: soundEnabled
+        )
     }
 
     static func sendShortBreakComplete(soundEnabled: Bool) {
-        send(title: "휴식 끝!", body: "다음 포모도로를 시작하세요", soundEnabled: soundEnabled)
+        send(
+            title: String(localized: "notification.shortBreakComplete.title"),
+            body: String(localized: "notification.shortBreakComplete.body"),
+            soundEnabled: soundEnabled
+        )
     }
 
     static func sendLongBreakComplete(soundEnabled: Bool) {
-        send(title: "긴 휴식 끝!", body: "새로운 사이클을 시작하세요", soundEnabled: soundEnabled)
+        send(
+            title: String(localized: "notification.longBreakComplete.title"),
+            body: String(localized: "notification.longBreakComplete.body"),
+            soundEnabled: soundEnabled
+        )
     }
 }

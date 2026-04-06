@@ -10,97 +10,158 @@ struct InlineSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                // Timer
-                SectionHeader("타이머")
-
-                Stepper("포모도로: \(settings.focusDurationMinutes)분",
-                        value: Bindable(settings).focusDurationMinutes,
-                        in: 1...120)
-                Stepper("짧은 휴식: \(settings.shortBreakDurationMinutes)분",
-                        value: Bindable(settings).shortBreakDurationMinutes,
-                        in: 1...60)
-                Stepper("긴 휴식: \(settings.longBreakDurationMinutes)분",
-                        value: Bindable(settings).longBreakDurationMinutes,
-                        in: 1...60)
-                Toggle("휴식 후 자동 시작", isOn: Bindable(settings).autoStartNextPomodoro)
+            VStack(alignment: .leading, spacing: 0) {
+                // Header
+                HStack(spacing: 6) {
+                    Text(String(localized: "settings.title"))
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(.primary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
 
                 Divider()
 
-                // Shortcut
-                SectionHeader("단축키")
+                // Timer section
+                settingsSectionHeader(String(localized: "settings.timer"))
 
-                HStack {
-                    Text("시작/정지:")
-                        .font(.system(size: 12))
-                    Spacer()
-                    KeyboardShortcuts.Recorder(for: .toggleTimer)
+                settingsRow(String(localized: "settings.pomodoro")) {
+                    Stepper(String(format: String(localized: "settings.duration"), settings.focusDurationMinutes),
+                            value: Bindable(settings).focusDurationMinutes,
+                            in: 1...120)
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+                }
+
+                settingsRow(String(localized: "settings.shortBreak")) {
+                    Stepper(String(format: String(localized: "settings.duration"), settings.shortBreakDurationMinutes),
+                            value: Bindable(settings).shortBreakDurationMinutes,
+                            in: 1...60)
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+                }
+
+                settingsRow(String(localized: "settings.longBreak")) {
+                    Stepper(String(format: String(localized: "settings.duration"), settings.longBreakDurationMinutes),
+                            value: Bindable(settings).longBreakDurationMinutes,
+                            in: 1...60)
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+                }
+
+                settingsRow(String(localized: "settings.autoStart")) {
+                    Toggle("", isOn: Bindable(settings).autoStartNextPomodoro)
+                        .toggleStyle(.switch)
+                        .controlSize(.mini)
                 }
 
                 Divider()
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
 
-                // Calendar
-                SectionHeader("캘린더")
+                // Shortcut section
+                settingsSectionHeader(String(localized: "settings.shortcuts"))
+
+                HStack {
+                    Text(String(localized: "settings.startStop"))
+                        .font(.system(size: 12, design: .rounded))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    KeyboardShortcuts.Recorder(for: .toggleTimer)
+                        .controlSize(.mini)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+
+                Divider()
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
+
+                // Calendar section
+                settingsSectionHeader(String(localized: "settings.calendar"))
 
                 if calendarVM.isAuthorized {
                     ForEach(calendarVM.calendars) { cal in
-                        Toggle(cal.title, isOn: Binding(
-                            get: { settings.selectedCalendarIds.contains(cal.id) },
-                            set: { _ in
-                                calendarVM.toggleCalendar(cal.id)
-                                calendarVM.syncEvents(into: taskVM)
-                            }
-                        ))
-                        .font(.system(size: 12))
+                        settingsRow(cal.title) {
+                            Toggle("", isOn: Binding(
+                                get: { settings.selectedCalendarIds.contains(cal.id) },
+                                set: { _ in
+                                    calendarVM.toggleCalendar(cal.id)
+                                    calendarVM.syncEvents(into: taskVM)
+                                }
+                            ))
+                            .toggleStyle(.switch)
+                            .controlSize(.mini)
+                        }
                     }
 
-                    Button("일정 새로고침") {
+                    Button(String(localized: "settings.refreshEvents")) {
                         calendarVM.syncEvents(into: taskVM)
                     }
-                    .font(.system(size: 12))
+                    .buttonStyle(.plain)
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
                 } else {
-                    Text("macOS 캘린더에 등록된 모든 계정(Google, iCloud 등)의 일정을 불러옵니다.")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
+                    Text(String(localized: "settings.calendarDescription"))
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(.tertiary)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 2)
 
-                    Button("캘린더 접근 허용") {
+                    Button(String(localized: "settings.allowCalendar")) {
                         Task { await calendarVM.requestAccess() }
                     }
-                    .font(.system(size: 12))
+                    .buttonStyle(.plain)
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(Color.pomodoroFocus)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
                 }
 
                 if let error = calendarVM.errorMessage {
                     Text(error)
-                        .font(.caption2)
+                        .font(.system(size: 10, design: .rounded))
                         .foregroundStyle(.red)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 2)
                 }
 
                 Divider()
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
 
-                // General
-                SectionHeader("일반")
+                // General section
+                settingsSectionHeader(String(localized: "settings.general"))
 
-                Toggle("로그인 시 자동 시작", isOn: Binding(
-                    get: { settings.launchAtLogin },
-                    set: { newValue in
-                        settings.launchAtLogin = newValue
-                        do {
-                            if newValue {
-                                try SMAppService.mainApp.register()
-                            } else {
-                                try SMAppService.mainApp.unregister()
+                settingsRow(String(localized: "settings.launchAtLogin")) {
+                    Toggle("", isOn: Binding(
+                        get: { settings.launchAtLogin },
+                        set: { newValue in
+                            settings.launchAtLogin = newValue
+                            do {
+                                if newValue {
+                                    try SMAppService.mainApp.register()
+                                } else {
+                                    try SMAppService.mainApp.unregister()
+                                }
+                            } catch {
+                                settings.launchAtLogin = !newValue
                             }
-                        } catch {
-                            settings.launchAtLogin = !newValue
                         }
-                    }
-                ))
+                    ))
+                    .toggleStyle(.switch)
+                    .controlSize(.mini)
+                }
 
-                Toggle("알림 사운드", isOn: Bindable(settings).soundEnabled)
+                settingsRow(String(localized: "settings.sound")) {
+                    Toggle("", isOn: Bindable(settings).soundEnabled)
+                        .toggleStyle(.switch)
+                        .controlSize(.mini)
+                }
             }
-            .font(.system(size: 12))
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.bottom, 8)
         }
         .frame(maxHeight: 380)
         .task {
@@ -110,15 +171,29 @@ struct InlineSettingsView: View {
             }
         }
     }
-}
 
-private struct SectionHeader: View {
-    let title: String
-    init(_ title: String) { self.title = title }
-    var body: some View {
+    // MARK: - Helpers
+
+    private func settingsSectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(.secondary)
+            .font(.system(size: 10, weight: .semibold, design: .rounded))
+            .foregroundStyle(.quaternary)
             .textCase(.uppercase)
+            .tracking(1.5)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
+    }
+
+    private func settingsRow<Content: View>(_ label: String, @ViewBuilder content: () -> Content) -> some View {
+        HStack {
+            Text(label)
+                .font(.system(size: 12, design: .rounded))
+                .foregroundStyle(.primary)
+            Spacer()
+            content()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
     }
 }

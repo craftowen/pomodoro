@@ -1,0 +1,58 @@
+/* PopoverView */
+"settings" = "설정";
+"back" = "돌아가기";
+"quit" = "종료";
+
+/* TimerView */
+"ready" = "준비";
+"start" = "시작";
+"pomodoro.cycle" = "포모도로 %lld/4";
+"shortBreak" = "짧은 휴식";
+"longBreak" = "긴 휴식";
+"next.pomodoro" = "다음: 포모도로 %lld/4";
+"next.newCycle" = "다음: 새 사이클";
+"a11y.resume" = "재개";
+"a11y.pause" = "일시정지";
+"a11y.reset" = "리셋";
+"a11y.skip" = "건너뛰기";
+"a11y.startPomodoro" = "포모도로 시작";
+
+/* TaskListView */
+"today.tasks" = "오늘 할 일";
+"no.tasks" = "오늘 예정된 일정이 없습니다";
+"task.placeholder" = "할 일 입력";
+"cancel" = "취소";
+"add" = "추가";
+
+/* TaskRowView */
+"a11y.deselect" = "선택 해제";
+"a11y.select" = "작업 선택";
+"a11y.undoComplete" = "완료 취소";
+"a11y.complete" = "완료";
+"delete" = "삭제";
+
+/* InlineSettingsView */
+"settings.title" = "설정";
+"settings.timer" = "타이머";
+"settings.pomodoro" = "포모도로";
+"settings.duration" = "%lld분";
+"settings.shortBreak" = "짧은 휴식";
+"settings.longBreak" = "긴 휴식";
+"settings.autoStart" = "자동 시작";
+"settings.shortcuts" = "단축키";
+"settings.startStop" = "시작/정지";
+"settings.calendar" = "캘린더";
+"settings.refreshEvents" = "일정 새로고침";
+"settings.calendarDescription" = "macOS 캘린더에 등록된 모든 계정의 일정을 불러옵니다.";
+"settings.allowCalendar" = "캘린더 접근 허용";
+"settings.general" = "일반";
+"settings.launchAtLogin" = "로그인 시 자동 시작";
+"settings.sound" = "알림 사운드";
+
+/* NotificationService */
+"notification.focusComplete.title" = "포모도로 완료!";
+"notification.focusComplete.body" = "휴식 시간입니다 ☕";
+"notification.shortBreakComplete.title" = "휴식 끝!";
+"notification.shortBreakComplete.body" = "다음 포모도로를 시작하세요";
+"notification.longBreakComplete.title" = "긴 휴식 끝!";
+"notification.longBreakComplete.body" = "새로운 사이클을 시작하세요";
