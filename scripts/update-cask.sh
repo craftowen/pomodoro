@@ -17,6 +17,7 @@ cask "pomodoro" do
   homepage "https://github.com/craftowen/pomodoro"
 
   depends_on macos: ">= :sonoma"
+  auto_updates true
 
   app "Pomodoro.app"
 
