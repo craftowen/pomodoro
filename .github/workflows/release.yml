@@ -25,9 +25,26 @@ jobs:
 
           APP_DIR=".build/release/Pomodoro.app/Contents"
           mkdir -p "$APP_DIR/MacOS"
+          mkdir -p "$APP_DIR/Resources"
+          mkdir -p "$APP_DIR/Frameworks"
 
           cp .build/release/Pomodoro "$APP_DIR/MacOS/Pomodoro"
           cp Pomodoro/Info.plist "$APP_DIR/Info.plist"
+
+          # Copy localized strings
+          BUNDLE_DIR=$(find .build -path "*/release/Pomodoro_Pomodoro.bundle" -type d 2>/dev/null | head -1)
+          if [ -n "$BUNDLE_DIR" ]; then
+              for lproj in "$BUNDLE_DIR"/*.lproj; do
+                  cp -R "$lproj" "$APP_DIR/Resources/"
+              done
+          fi
+
+          # Embed Sparkle.framework
+          SPARKLE_FW=$(find .build/artifacts -name "Sparkle.framework" -path "*/macos*" -type d 2>/dev/null | head -1)
+          if [ -n "$SPARKLE_FW" ]; then
+              cp -R "$SPARKLE_FW" "$APP_DIR/Frameworks/"
+              install_name_tool -add_rpath @executable_path/../Frameworks "$APP_DIR/MacOS/Pomodoro" 2>/dev/null || true
+          fi
 
           /usr/libexec/PlistBuddy -c "Delete :CFBundleIdentifier" "$APP_DIR/Info.plist" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string com.pomodoro.app" "$APP_DIR/Info.plist"
@@ -40,6 +57,9 @@ jobs:
           /usr/libexec/PlistBuddy -c "Delete :CFBundleShortVersionString" "$APP_DIR/Info.plist" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$APP_DIR/Info.plist"
 
+          # Ad-hoc sign
+          codesign --force --sign - --entitlements Pomodoro/Pomodoro.entitlements .build/release/Pomodoro.app
+
       - name: Create zip
         run: |
           cd .build/release
@@ -50,20 +70,40 @@ jobs:
           SHA=$(shasum -a 256 .build/release/Pomodoro.app.zip | awk '{print $1}')
           echo "SHA256=$SHA" >> "$GITHUB_ENV"
 
+      - name: Sign with EdDSA for Sparkle
+        run: |
+          curl -sL -o /tmp/Sparkle.tar.xz https://github.com/sparkle-project/Sparkle/releases/download/2.9.1/Sparkle-2.9.1.tar.xz
+          mkdir -p /tmp/sparkle-tools
+          tar xf /tmp/Sparkle.tar.xz -C /tmp/sparkle-tools
+
+          echo "${{ secrets.SPARKLE_PRIVATE_KEY }}" > /tmp/sparkle_key
+
+          SIGN_OUTPUT=$(/tmp/sparkle-tools/bin/sign_update .build/release/Pomodoro.app.zip -f /tmp/sparkle_key)
+          rm -f /tmp/sparkle_key
+
+          ED_SIGNATURE=$(echo "$SIGN_OUTPUT" | grep -o 'edSignature="[^"]*"' | cut -d'"' -f2)
+          FILE_LENGTH=$(wc -c < .build/release/Pomodoro.app.zip | tr -d ' ')
+
+          echo "ED_SIGNATURE=$ED_SIGNATURE" >> "$GITHUB_ENV"
+          echo "FILE_LENGTH=$FILE_LENGTH" >> "$GITHUB_ENV"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: .build/release/Pomodoro.app.zip
           generate_release_notes: true
 
+      - name: Update appcast.xml
+        run: scripts/update-appcast.sh "$VERSION" "$ED_SIGNATURE" "$FILE_LENGTH"
+
       - name: Update Cask formula
         run: scripts/update-cask.sh "$VERSION" "$SHA256"
 
-      - name: Commit updated Cask
+      - name: Commit updated Cask and appcast
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Casks/pomodoro.rb
+          git add Casks/pomodoro.rb appcast.xml
           git diff --cached --quiet && exit 0
-          git commit -m "chore: update Homebrew Cask to v${VERSION}"
+          git commit -m "chore: update Homebrew Cask and appcast to v${VERSION}"
           git push
