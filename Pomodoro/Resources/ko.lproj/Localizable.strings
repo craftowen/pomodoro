@@ -1,6 +1,6 @@
 /* PopoverView */
-"settings" = "설정";
-"back" = "돌아가기";
+"tab.timer" = "타이머";
+"tab.settings" = "설정";
 "quit" = "종료";
 
 /* TimerView */
@@ -45,9 +45,11 @@
 "settings.refreshEvents" = "일정 새로고침";
 "settings.calendarDescription" = "macOS 캘린더에 등록된 모든 계정의 일정을 불러옵니다.";
 "settings.allowCalendar" = "캘린더 접근 허용";
+"settings.calendarDenied" = "캘린더 접근이 거부되었습니다. 시스템 설정 > 개인정보 보호에서 허용해주세요.";
 "settings.general" = "일반";
 "settings.launchAtLogin" = "로그인 시 자동 시작";
 "settings.sound" = "알림 사운드";
+"settings.checkForUpdates" = "업데이트 확인";
 
 /* NotificationService */
 "notification.focusComplete.title" = "포모도로 완료!";

@@ -1,52 +1,40 @@
 import SwiftUI
+import AppKit
 import KeyboardShortcuts
 import ServiceManagement
 
 struct InlineSettingsView: View {
     let timerVM: TimerViewModel
     let taskVM: TaskViewModel
+    let updaterService: UpdaterService
     @State private var calendarVM = CalendarViewModel()
     private let settings = UserSettings.shared
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                // Header
-                HStack(spacing: 6) {
-                    Text(String(localized: "settings.title"))
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.primary)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-
-                Divider()
-
                 // Timer section
                 settingsSectionHeader(String(localized: "settings.timer"))
 
                 settingsRow(String(localized: "settings.pomodoro")) {
-                    Stepper(String(format: String(localized: "settings.duration"), settings.focusDurationMinutes),
-                            value: Bindable(settings).focusDurationMinutes,
-                            in: 1...120)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    durationStepper(
+                        value: Bindable(settings).focusDurationMinutes,
+                        range: 1...120
+                    )
                 }
 
                 settingsRow(String(localized: "settings.shortBreak")) {
-                    Stepper(String(format: String(localized: "settings.duration"), settings.shortBreakDurationMinutes),
-                            value: Bindable(settings).shortBreakDurationMinutes,
-                            in: 1...60)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    durationStepper(
+                        value: Bindable(settings).shortBreakDurationMinutes,
+                        range: 1...60
+                    )
                 }
 
                 settingsRow(String(localized: "settings.longBreak")) {
-                    Stepper(String(format: String(localized: "settings.duration"), settings.longBreakDurationMinutes),
-                            value: Bindable(settings).longBreakDurationMinutes,
-                            in: 1...60)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    durationStepper(
+                        value: Bindable(settings).longBreakDurationMinutes,
+                        range: 1...60
+                    )
                 }
 
                 settingsRow(String(localized: "settings.autoStart")) {
@@ -65,13 +53,13 @@ struct InlineSettingsView: View {
                 HStack {
                     Text(String(localized: "settings.startStop"))
                         .font(.system(size: 12, design: .rounded))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.secondary)
                     Spacer()
                     KeyboardShortcuts.Recorder(for: .toggleTimer)
                         .controlSize(.mini)
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 6)
+                .padding(.vertical, 8)
 
                 Divider()
                     .padding(.horizontal, 16)
@@ -99,30 +87,36 @@ struct InlineSettingsView: View {
                         calendarVM.syncEvents(into: taskVM)
                     }
                     .buttonStyle(.plain)
-                    .font(.system(size: 11, design: .rounded))
+                    .font(.system(size: 12, design: .rounded))
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
                 } else {
                     Text(String(localized: "settings.calendarDescription"))
-                        .font(.system(size: 10, design: .rounded))
-                        .foregroundStyle(.tertiary)
+                        .font(.system(size: 12, design: .rounded))
+                        .foregroundStyle(.secondary)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 2)
 
-                    Button(String(localized: "settings.allowCalendar")) {
+                    Button {
                         Task { await calendarVM.requestAccess() }
+                    } label: {
+                        Text(String(localized: "settings.allowCalendar"))
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 5)
+                            .background(Color.pomodoroFocus)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                     .buttonStyle(.plain)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(Color.pomodoroFocus)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
                 }
 
                 if let error = calendarVM.errorMessage {
                     Text(error)
-                        .font(.system(size: 10, design: .rounded))
+                        .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(.red)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 2)
@@ -160,15 +154,27 @@ struct InlineSettingsView: View {
                         .toggleStyle(.switch)
                         .controlSize(.mini)
                 }
+
+                settingsRow(String(localized: "settings.checkForUpdates")) {
+                    Button {
+                        updaterService.checkForUpdates()
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!updaterService.canCheckForUpdates)
+                }
             }
             .padding(.bottom, 8)
         }
         .frame(maxHeight: 380)
         .task {
-            if calendarVM.isAuthorized {
-                calendarVM.loadCalendars()
-                calendarVM.syncEvents(into: taskVM)
-            }
+            refreshCalendarConnection()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            refreshCalendarConnection()
         }
     }
 
@@ -176,8 +182,8 @@ struct InlineSettingsView: View {
 
     private func settingsSectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 10, weight: .semibold, design: .rounded))
-            .foregroundStyle(.quaternary)
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
+            .foregroundStyle(.secondary)
             .textCase(.uppercase)
             .tracking(1.5)
             .padding(.horizontal, 16)
@@ -185,15 +191,59 @@ struct InlineSettingsView: View {
             .padding(.bottom, 4)
     }
 
+    private func durationStepper(value: Binding<Int>, range: ClosedRange<Int>) -> some View {
+        HStack(spacing: 4) {
+            Button {
+                if value.wrappedValue > range.lowerBound {
+                    value.wrappedValue -= 1
+                }
+            } label: {
+                Image(systemName: "minus")
+                    .font(.system(size: 10, weight: .semibold))
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+
+            Text(String(format: String(localized: "settings.duration"), value.wrappedValue))
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .foregroundStyle(.primary)
+                .frame(minWidth: 44)
+
+            Button {
+                if value.wrappedValue < range.upperBound {
+                    value.wrappedValue += 1
+                }
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 10, weight: .semibold))
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+        }
+    }
+
     private func settingsRow<Content: View>(_ label: String, @ViewBuilder content: () -> Content) -> some View {
         HStack {
             Text(label)
                 .font(.system(size: 12, design: .rounded))
-                .foregroundStyle(.primary)
+                .foregroundStyle(.secondary)
             Spacer()
             content()
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
+    }
+
+    private func refreshCalendarConnection() {
+        calendarVM.refreshAuthStatus()
+        if calendarVM.isAuthorized {
+            calendarVM.syncEvents(into: taskVM)
+        } else {
+            taskVM.mergeCalendarEvents([])
+        }
     }
 }

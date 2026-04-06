@@ -8,6 +8,7 @@ enum PopoverTab {
 struct PopoverView: View {
     let timerVM: TimerViewModel
     let taskVM: TaskViewModel
+    let updaterService: UpdaterService
     @State private var activeTab: PopoverTab = .main
 
     var body: some View {
@@ -22,45 +23,55 @@ struct PopoverView: View {
                         .transition(.move(edge: .trailing).combined(with: .opacity))
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.25), value: activeTab)
 
             Divider()
 
-            HStack {
-                if activeTab == .main {
-                    Button(action: { activeTab = .settings }) {
-                        Image(systemName: "gear")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.quaternary)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(String(localized: "settings"))
-                } else {
-                    Button(action: { activeTab = .main }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 9, weight: .semibold))
-                            Text(String(localized: "back"))
-                                .font(.system(size: 10, design: .rounded))
-                        }
-                        .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
+            HStack(spacing: 0) {
+                tabButton(
+                    icon: "timer",
+                    title: String(localized: "tab.timer"),
+                    tab: .main
+                )
+
+                tabButton(
+                    icon: "gear",
+                    title: String(localized: "tab.settings"),
+                    tab: .settings
+                )
 
                 Spacer()
 
                 Button(action: { NSApplication.shared.terminate(nil) }) {
                     Text(String(localized: "quit"))
-                        .font(.system(size: 10, design: .rounded))
-                        .foregroundStyle(.quaternary)
+                        .font(.system(size: 11, design: .rounded))
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(String(localized: "quit"))
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
             .padding(.vertical, 6)
         }
+    }
+
+    private func tabButton(icon: String, title: String, tab: PopoverTab) -> some View {
+        let isActive = activeTab == tab
+        return Button(action: { activeTab = tab }) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 11))
+                Text(title)
+                    .font(.system(size: 11, weight: isActive ? .medium : .regular, design: .rounded))
+            }
+            .foregroundStyle(isActive ? .primary : .secondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(isActive ? Color.primary.opacity(0.06) : Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+        }
+        .buttonStyle(.plain)
     }
 
     private var mainContent: some View {
@@ -74,6 +85,6 @@ struct PopoverView: View {
     }
 
     private var settingsContent: some View {
-        InlineSettingsView(timerVM: timerVM, taskVM: taskVM)
+        InlineSettingsView(timerVM: timerVM, taskVM: taskVM, updaterService: updaterService)
     }
 }

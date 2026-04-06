@@ -1,6 +1,6 @@
 /* PopoverView */
-"settings" = "Settings";
-"back" = "Back";
+"tab.timer" = "Timer";
+"tab.settings" = "Settings";
 "quit" = "Quit";
 
 /* TimerView */
@@ -45,9 +45,11 @@
 "settings.refreshEvents" = "Refresh Events";
 "settings.calendarDescription" = "Import events from all calendar accounts on macOS.";
 "settings.allowCalendar" = "Allow Calendar Access";
+"settings.calendarDenied" = "Calendar access denied. Please allow in System Settings > Privacy & Security.";
 "settings.general" = "General";
 "settings.launchAtLogin" = "Launch at Login";
 "settings.sound" = "Notification Sound";
+"settings.checkForUpdates" = "Check for Updates";
 
 /* NotificationService */
 "notification.focusComplete.title" = "Pomodoro Complete!";

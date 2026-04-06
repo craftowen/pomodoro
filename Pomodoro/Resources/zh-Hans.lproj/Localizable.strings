@@ -1,6 +1,6 @@
 /* PopoverView */
-"settings" = "设置";
-"back" = "返回";
+"tab.timer" = "计时器";
+"tab.settings" = "设置";
 "quit" = "退出";
 
 /* TimerView */
@@ -45,9 +45,11 @@
 "settings.refreshEvents" = "刷新日程";
 "settings.calendarDescription" = "导入macOS日历中所有帐户的日程。";
 "settings.allowCalendar" = "允许访问日历";
+"settings.calendarDenied" = "日历访问被拒绝。请在系统设置 > 隐私与安全中允许。";
 "settings.general" = "通用";
 "settings.launchAtLogin" = "登录时启动";
 "settings.sound" = "提示音";
+"settings.checkForUpdates" = "检查更新";
 
 /* NotificationService */
 "notification.focusComplete.title" = "番茄钟完成！";
