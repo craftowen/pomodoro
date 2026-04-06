@@ -1,0 +1,22 @@
+.DS_Store
+.build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.swiftpm/
+Packages/
+*.resolved
+*.o
+*.swp
+*.tmp
+.vscode/
+.idea/
+Pomodoro/Config/GoogleOAuth.swift
+
+# Claude Code / AI tools
+.claude/
+.context/
+.specify/
+.superpowers/
+CLAUDE.md
+docs/
