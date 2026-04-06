@@ -12,6 +12,7 @@ struct TaskRowView: View {
         HStack(spacing: 8) {
             selectionIndicator
                 .onTapGesture(perform: onSelect)
+                .accessibilityLabel(task.isSelected ? "선택 해제" : "작업 선택")
 
             if let timeLabel = task.timeLabel {
                 Text(timeLabel)

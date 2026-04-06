@@ -11,7 +11,7 @@ struct PomodoroApp: App {
     var body: some Scene {
         MenuBarExtra {
             PopoverView(timerVM: timerVM, taskVM: taskVM)
-                .frame(width: 300, height: 420)
+                .frame(width: 280, height: 400)
                 .onChange(of: taskVM.selectedTask?.id) { _, newId in
                     timerVM.state.currentTaskId = newId
                 }
