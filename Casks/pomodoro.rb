@@ -12,6 +12,8 @@ cask "pomodoro" do
 
   app "Pomodoro.app"
 
+  uninstall quit: "com.pomodoro.app"
+
   postflight do
     system_command "/usr/bin/xattr",
                    args: ["-cr", "#{appdir}/Pomodoro.app"]
