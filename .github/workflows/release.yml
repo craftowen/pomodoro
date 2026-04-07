@@ -61,6 +61,8 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :NSPrincipalClass string NSApplication" "$APP_DIR/Info.plist"
           /usr/libexec/PlistBuddy -c "Delete :CFBundleShortVersionString" "$APP_DIR/Info.plist" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$APP_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleVersion" "$APP_DIR/Info.plist" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $VERSION" "$APP_DIR/Info.plist"
 
           # Ad-hoc sign embedded frameworks first, then the app
           codesign --force --sign - "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
