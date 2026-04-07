@@ -1,6 +1,6 @@
 cask "pomodoro" do
-  version "0.2.0"
-  sha256 "aeabd0ef4b860019651412a9668ff496c535611afb9a84b71b2bd0d5750e823d"
+  version "0.2.1"
+  sha256 "dab83e9539f42f629257d95ec4f317d25c433d53e5d9677e78b405373e9ca081"
 
   url "https://github.com/craftowen/pomodoro/releases/download/v#{version}/Pomodoro.app.zip"
   name "Pomodoro"

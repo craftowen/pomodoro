@@ -13,5 +13,15 @@
                        length="3621715"
                        type="application/octet-stream"/>
         </item>
+        <item>
+            <title>Version 0.2.1</title>
+            <pubDate>Tue, 07 Apr 2026 00:26:57 +0000</pubDate>
+            <sparkle:version>0.2.1</sparkle:version>
+            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
+            <enclosure url="https://github.com/craftowen/pomodoro/releases/download/v0.2.1/Pomodoro.app.zip"
+                       sparkle:edSignature="GSXe2hRCrZzTCJg00boJox+Xdau11V8wJbBN2RtGht/wlfJGzfVjNgHXIr2hR/mh8M9ViOm0ftE0qXFht4YzBw=="
+                       length="3622706"
+                       type="application/octet-stream"/>
+        </item>
     </channel>
 </rss>
