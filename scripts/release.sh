@@ -4,7 +4,9 @@ set -e
 echo "Building release..."
 swift build -c release 2>&1
 
-APP_DIR=".build/release/Pomodoro.app/Contents"
+APP_BUNDLE=".build/release/Pomodoro.app"
+APP_DIR="$APP_BUNDLE/Contents"
+rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_DIR/MacOS"
 mkdir -p "$APP_DIR/Resources"
 mkdir -p "$APP_DIR/Frameworks"

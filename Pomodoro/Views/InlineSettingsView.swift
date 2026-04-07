@@ -3,6 +3,15 @@ import AppKit
 import KeyboardShortcuts
 import ServiceManagement
 
+enum KeyboardShortcutsRecorderSupport {
+    static let resourceBundleName = "KeyboardShortcuts_KeyboardShortcuts.bundle"
+
+    static func isAvailable(in bundleURL: URL) -> Bool {
+        let bundlePath = bundleURL.appendingPathComponent(resourceBundleName).path
+        return FileManager.default.fileExists(atPath: bundlePath)
+    }
+}
+
 struct InlineSettingsView: View {
     let timerVM: TimerViewModel
     let taskVM: TaskViewModel
@@ -55,8 +64,14 @@ struct InlineSettingsView: View {
                         .font(.system(size: 12, design: .rounded))
                         .foregroundStyle(.secondary)
                     Spacer()
-                    KeyboardShortcuts.Recorder(for: .toggleTimer)
-                        .controlSize(.mini)
+                    if keyboardShortcutsRecorderAvailable {
+                        KeyboardShortcuts.Recorder(for: .toggleTimer)
+                            .controlSize(.mini)
+                    } else {
+                        Text(toggleTimerShortcutLabel)
+                            .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -252,6 +267,18 @@ struct InlineSettingsView: View {
         }
 
         return "Check for Updates"
+    }
+
+    private var keyboardShortcutsRecorderAvailable: Bool {
+        KeyboardShortcutsRecorderSupport.isAvailable(in: Bundle.main.bundleURL)
+    }
+
+    private var toggleTimerShortcutLabel: String {
+        if let shortcut = KeyboardShortcuts.getShortcut(for: .toggleTimer) {
+            return String(describing: shortcut)
+        }
+
+        return "⌘⇧P"
     }
 
     private func refreshCalendarConnection() {

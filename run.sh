@@ -4,7 +4,9 @@ set -e
 echo "Building..."
 swift build -c debug 2>&1
 
-APP_DIR=".build/Pomodoro.app/Contents"
+APP_BUNDLE=".build/Pomodoro.app"
+APP_DIR="$APP_BUNDLE/Contents"
+rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_DIR/MacOS"
 mkdir -p "$APP_DIR/Resources"
 mkdir -p "$APP_DIR/Frameworks"
