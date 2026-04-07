@@ -22,11 +22,9 @@
   </a>
 </p>
 
-<!-- TODO: Add screenshot or GIF of the app in action
 <p align="center">
-  <img src="assets/screenshot.png" width="320" alt="Pomodoro Screenshot" />
+  <img src="assets/screenshot.png" alt="Pomodoro Menu Bar" />
 </p>
--->
 
 ## Features
 
@@ -46,14 +44,8 @@
 ### Homebrew (recommended)
 
 ```bash
-brew tap craftowen/pomodoro https://github.com/craftowen/pomodoro
-brew install --cask pomodoro
+brew install --cask craftowen/pomodoro/pomodoro
 ```
-
-> **Note:** If the app doesn't start due to macOS quarantine:
-> ```bash
-> brew install --cask --no-quarantine pomodoro
-> ```
 
 ### Download
 
