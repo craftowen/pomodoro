@@ -42,9 +42,11 @@ else
     echo "Warning: Sparkle.framework not found. Auto-update will not work."
 fi
 
-# Ad-hoc sign embedded frameworks first, then the app
-codesign --force --sign - "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
-codesign --force --sign - --entitlements Pomodoro/Pomodoro.entitlements .build/release/Pomodoro.app
+# Sign with POMODORO_SIGN_ID if set (stable identity → TCC permission survives
+# rebuilds), otherwise fall back to ad-hoc so CI without a cert still works.
+SIGN_ID="${POMODORO_SIGN_ID:--}"
+codesign --force --sign "$SIGN_ID" "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
+codesign --force --sign "$SIGN_ID" --entitlements Pomodoro/Pomodoro.entitlements .build/release/Pomodoro.app
 
 # Create zip for distribution
 echo "Creating Pomodoro.app.zip..."

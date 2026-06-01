@@ -8,6 +8,7 @@ enum PopoverTab {
 struct PopoverView: View {
     let timerVM: TimerViewModel
     let taskVM: TaskViewModel
+    let calendarVM: CalendarViewModel
     let updaterService: UpdaterService
     @State private var activeTab: PopoverTab = .main
 
@@ -85,6 +86,6 @@ struct PopoverView: View {
     }
 
     private var settingsContent: some View {
-        InlineSettingsView(timerVM: timerVM, taskVM: taskVM, updaterService: updaterService)
+        InlineSettingsView(timerVM: timerVM, taskVM: taskVM, calendarVM: calendarVM, updaterService: updaterService)
     }
 }

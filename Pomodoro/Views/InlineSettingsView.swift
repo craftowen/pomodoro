@@ -15,8 +15,8 @@ enum KeyboardShortcutsRecorderSupport {
 struct InlineSettingsView: View {
     let timerVM: TimerViewModel
     let taskVM: TaskViewModel
+    let calendarVM: CalendarViewModel
     let updaterService: UpdaterService
-    @State private var calendarVM = CalendarViewModel()
     private let settings = UserSettings.shared
 
     var body: some View {

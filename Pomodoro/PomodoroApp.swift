@@ -6,13 +6,17 @@ import KeyboardShortcuts
 struct PomodoroApp: App {
     @State private var timerVM = TimerViewModel()
     @State private var taskVM = TaskViewModel()
+    @State private var calendarVM = CalendarViewModel()
     @State private var updaterService = UpdaterService()
     var body: some Scene {
         MenuBarExtra {
-            PopoverView(timerVM: timerVM, taskVM: taskVM, updaterService: updaterService)
+            PopoverView(timerVM: timerVM, taskVM: taskVM, calendarVM: calendarVM, updaterService: updaterService)
                 .frame(width: 320, height: 420)
                 .onChange(of: taskVM.selectedTask?.id) { _, newId in
                     timerVM.state.currentTaskId = newId
+                }
+                .task {
+                    calendarVM.startAutoRefresh(taskVM: taskVM)
                 }
         } label: {
             if timerVM.state.isActive {

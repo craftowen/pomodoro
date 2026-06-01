@@ -42,9 +42,13 @@ else
     echo "Warning: Sparkle.framework not found. Auto-update will not work."
 fi
 
-# Ad-hoc sign embedded frameworks first, then the app
-codesign --force --sign - "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
-codesign --force --sign - --entitlements Pomodoro/Pomodoro.entitlements .build/Pomodoro.app
+# Sign with a stable identity so TCC (Calendar permission) survives rebuilds.
+# Ad-hoc (--sign -) pins the designated requirement to the cdhash, which changes
+# on every build and breaks the granted permission. A real cert keys it to the
+# Team ID instead, so the permission persists across rebuilds/updates.
+SIGN_ID="${POMODORO_SIGN_ID:-Apple Development: JIN OH CHOO (J4K69YLRGW)}"
+codesign --force --sign "$SIGN_ID" "$APP_DIR/Frameworks/Sparkle.framework" 2>/dev/null || true
+codesign --force --sign "$SIGN_ID" --entitlements Pomodoro/Pomodoro.entitlements .build/Pomodoro.app
 
 echo "Launching Pomodoro.app..."
 open .build/Pomodoro.app
